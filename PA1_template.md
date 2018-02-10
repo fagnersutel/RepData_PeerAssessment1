@@ -176,7 +176,7 @@ head(atividades)
 ```
 ## # A tibble: 6 x 2
 ##   date       steps
-##   <fctr>     <dbl>
+##   <fct>      <dbl>
 ## 1 2012-10-01 10766
 ## 2 2012-10-02   126
 ## 3 2012-10-03 11352
@@ -196,11 +196,19 @@ qplot(filtro, xlab='Total steps per day (Imputed)', ylab='Frequency using binwit
 
 ```r
 data_na$date <- as.POSIXct(data_na$date)
+```
+
+```
+## Warning in strptime(xx, f <- "%Y-%m-%d %H:%M:%OS", tz = tz): unknown
+## timezone 'zone/tz/2017c.1.0/zoneinfo/America/Sao_Paulo'
+```
+
+```r
 data_na$mes <- as.numeric(format(data_na$date, "%m"))
 ggplot(data_na, aes(date, steps)) + 
   facet_grid(. ~ mes, scales = "free") + 
   geom_bar(stat = "identity", position = "stack", colour = "blue", fill = "red", width = 0.5) + 
-  labs(title = "Numero Total de passos dados a cada dia - Considerando NAs com a média", x = "Data", y = "Numero de Passos")
+  labs(title = "Numero Total de passos dados a cada dia - Considerando NAs com a m??dia", x = "Data", y = "Numero de Passos")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
@@ -237,18 +245,18 @@ library(data.table)
 data_na <- as.data.table(data_na)
 data_na$dia <- weekdays(data_na$date)
 #head(data_na)
-data_na$modo <- ifelse(data_na$dia == "sábado" | data_na$dia == "domingo", "Weekend", "Weekday")
+data_na$modo <- ifelse(data_na$dia == "sabado" | data_na$dia == "domingo" | data_na$dia == "Saturday" | data_na$dia == "Sunday", "Weekend", "Weekday")
 head(data_na)
 ```
 
 ```
-##      steps       date interval mes     dia    modo
-## 1: 37.3826 2012-10-01        0  10 segunda Weekday
-## 2: 37.3826 2012-10-01        5  10 segunda Weekday
-## 3: 37.3826 2012-10-01       10  10 segunda Weekday
-## 4: 37.3826 2012-10-01       15  10 segunda Weekday
-## 5: 37.3826 2012-10-01       20  10 segunda Weekday
-## 6: 37.3826 2012-10-01       25  10 segunda Weekday
+##      steps       date interval mes    dia    modo
+## 1: 37.3826 2012-10-01        0  10 Monday Weekday
+## 2: 37.3826 2012-10-01        5  10 Monday Weekday
+## 3: 37.3826 2012-10-01       10  10 Monday Weekday
+## 4: 37.3826 2012-10-01       15  10 Monday Weekday
+## 5: 37.3826 2012-10-01       20  10 Monday Weekday
+## 6: 37.3826 2012-10-01       25  10 Monday Weekday
 ```
 
 ```r
@@ -273,7 +281,7 @@ medias_dias
 ## # A tibble: 576 x 3
 ## # Groups:   modo [?]
 ##    modo    interval steps
-##    <fctr>     <int> <dbl>
+##    <fct>      <int> <dbl>
 ##  1 Weekday        0  7.01
 ##  2 Weekday        5  5.38
 ##  3 Weekday       10  5.14

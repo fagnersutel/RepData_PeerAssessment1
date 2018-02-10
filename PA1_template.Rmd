@@ -124,7 +124,7 @@ data_na$mes <- as.numeric(format(data_na$date, "%m"))
 ggplot(data_na, aes(date, steps)) + 
   facet_grid(. ~ mes, scales = "free") + 
   geom_bar(stat = "identity", position = "stack", colour = "blue", fill = "red", width = 0.5) + 
-  labs(title = "Numero Total de passos dados a cada dia - Considerando NAs com a média", x = "Data", y = "Numero de Passos")
+  labs(title = "Numero Total de passos dados a cada dia - Considerando NAs com a m??dia", x = "Data", y = "Numero de Passos")
 ```
 
 ```{r}
@@ -139,7 +139,7 @@ library(data.table)
 data_na <- as.data.table(data_na)
 data_na$dia <- weekdays(data_na$date)
 #head(data_na)
-data_na$modo <- ifelse(data_na$dia == "sábado" | data_na$dia == "domingo", "Weekend", "Weekday")
+data_na$modo <- ifelse(data_na$dia == "sabado" | data_na$dia == "domingo" | data_na$dia == "Saturday" | data_na$dia == "Sunday", "Weekend", "Weekday")
 head(data_na)
 data_na$modo <- as.factor(data_na$modo)
 summary(data_na$modo)
