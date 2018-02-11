@@ -121,7 +121,7 @@ paste("The median is: ", mediana, sep = " " )
 
 
 ```r
-hist(passos$steps, xlab = "Numero Medio de Passos", ylab = "Frequencia", main = "Numero de passos por dia", col = "pink")
+hist(passos$steps, xlab = "Numero de passos por dia", ylab = "Frequencia", main = "Histograma do Numero Total de Passos por Dia", col = "pink")
 #abline(v = media,  col="green", lwd=3, lty=3)
 abline(v=c(media,mediana), col=c("green", "red"), lty=c(3,2), lwd=c(3, 3))
 legend("topright", c("Mean", "Median"), fill=c("Green", "red"))
@@ -388,7 +388,7 @@ medias_dias
 ggplot(data = medias_dias, aes(x = interval, y = steps)) +
   facet_grid(tipo_dia ~ .) +
   geom_line(stat = "identity", aes(colour = tipo_dia)) +
-  ggtitle("Dias Uteis x Fim de Semana (Media de Passadas)") +
+  ggtitle("No de passadas por intervalo por tipo de Dia") +
   labs(x="Intervalo", y=expression("Numero de passos"))
 ```
 
