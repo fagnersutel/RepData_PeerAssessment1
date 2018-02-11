@@ -121,7 +121,7 @@ paste("The median is: ", mediana, sep = " " )
 
 
 ```r
-hist(passos$steps, xlab = "Passos", ylab = "Frequencia", main = "Number of steps taken each day (with mean - green line)", col = "pink")
+hist(passos$steps, xlab = "Numero Medio de Passos", ylab = "Frequencia", main = "Numero de passos por dia", col = "pink")
 #abline(v = media,  col="green", lwd=3, lty=3)
 abline(v=c(media,mediana), col=c("green", "red"), lty=c(3,2), lwd=c(3, 3))
 legend("topright", c("Mean", "Median"), fill=c("Green", "red"))
@@ -149,7 +149,7 @@ media_de_passadas <- data %>%
 
 
 ```r
-plot(media_de_passadas$interval, media_de_passadas$steps, type="l", xlab="Intervalo", ylab="Passadas",main="Media Diaria de Passadas por Intervalo")
+plot(media_de_passadas$interval, media_de_passadas$steps, type="l", xlab="Intervalo de 5 minutos", ylab="Media de Passadas",main="Media Diaria de Passadas por Intervalo")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
@@ -290,7 +290,7 @@ mediana_dia <- median(filtro)
 
 
 ```r
-hist(filtro, xlab = "Numero de Passos", ylab = "Frequencia", main = "Histograma com o numero total de passos por dia com NAs tratados", col = "#2073d4")
+hist(filtro, xlab = "Numero de Passos por dia", ylab = "Frequencia", main = "Histograma com o numero total de passos por dia com NAs tratados", col = "#2073d4")
 abline(v=c(media_dia,mediana_dia), col=c("green", "red"), lty=c(3,2), lwd=c(3, 3))
 legend("topright", c("Mean", "Median"), fill=c("Green", "red"))
 ```
@@ -461,6 +461,7 @@ data_weekends <- ggplot(weekend_db) +
 
 * Instalamos e Carregamos a biblioteca para criar grid de plotagens
 * Install and load the library to create a plot grid
+
 
 ```r
 #install.packages('gridExtra')
