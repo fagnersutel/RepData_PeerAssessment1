@@ -70,6 +70,19 @@ head(data)
 passos <- data %>%
         group_by(date) %>%
                 summarise(steps = sum(steps))
+head(passos)
+```
+
+```
+## # A tibble: 6 x 2
+##   date       steps
+##   <fct>      <int>
+## 1 2012-10-02   126
+## 2 2012-10-03 11352
+## 3 2012-10-04 12116
+## 4 2012-10-05 13294
+## 5 2012-10-06 15420
+## 6 2012-10-07 11015
 ```
 
 
@@ -142,6 +155,19 @@ legend("topright", c("Mean", "Median"), fill=c("Green", "red"))
 media_de_passadas <- data %>%
         group_by(interval) %>%
                 summarise(steps = mean(steps))
+head(media_de_passadas)
+```
+
+```
+## # A tibble: 6 x 2
+##   interval  steps
+##      <int>  <dbl>
+## 1        0 1.72  
+## 2        5 0.340 
+## 3       10 0.132 
+## 4       15 0.151 
+## 5       20 0.0755
+## 6       25 2.09
 ```
 
 * Plot the data
@@ -246,6 +272,12 @@ paste("Number of NAs: ", size, sep = " " )
 
 ```r
 filtro <- tapply(data_na$steps, data_na$date, sum)
+head(filtro)
+```
+
+```
+## 2012-10-01 2012-10-02 2012-10-03 2012-10-04 2012-10-05 2012-10-06 
+##   10766.19     126.00   11352.00   12116.00   13294.00   15420.00
 ```
 
 * Converto as datas para milesegundos
@@ -359,25 +391,20 @@ summary(data_na$tipo_dia)
 medias_dias <- data_na %>%
                       group_by(tipo_dia,interval) %>%
                       summarise(steps = mean(steps))
-medias_dias
+head(medias_dias)
 ```
 
 ```
-## # A tibble: 576 x 3
-## # Groups:   tipo_dia [?]
-##    tipo_dia interval steps
-##    <fct>       <int> <dbl>
-##  1 Weekday         0  7.01
-##  2 Weekday         5  5.38
-##  3 Weekday        10  5.14
-##  4 Weekday        15  5.16
-##  5 Weekday        20  5.07
-##  6 Weekday        25  6.30
-##  7 Weekday        30  5.61
-##  8 Weekday        35  6.01
-##  9 Weekday        40  4.98
-## 10 Weekday        45  6.58
-## # ... with 566 more rows
+## # A tibble: 6 x 3
+## # Groups:   tipo_dia [1]
+##   tipo_dia interval steps
+##   <fct>       <int> <dbl>
+## 1 Weekday         0  7.01
+## 2 Weekday         5  5.38
+## 3 Weekday        10  5.14
+## 4 Weekday        15  5.16
+## 5 Weekday        20  5.07
+## 6 Weekday        25  6.30
 ```
 
 * Plotagem dos dados medios para dias uteis e fins de semana

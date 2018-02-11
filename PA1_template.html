@@ -171,7 +171,17 @@ head(data)</code></pre>
 </ul>
 <pre class="r"><code>passos &lt;- data %&gt;%
         group_by(date) %&gt;%
-                summarise(steps = sum(steps))</code></pre>
+                summarise(steps = sum(steps))
+head(passos)</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   date       steps
+##   &lt;fct&gt;      &lt;int&gt;
+## 1 2012-10-02   126
+## 2 2012-10-03 11352
+## 3 2012-10-04 12116
+## 4 2012-10-05 13294
+## 5 2012-10-06 15420
+## 6 2012-10-07 11015</code></pre>
 <ul>
 <li>Obtemos a media de passos por dia</li>
 <li>obtain the mean of steps by day</li>
@@ -208,7 +218,17 @@ legend(&quot;topright&quot;, c(&quot;Mean&quot;, &quot;Median&quot;), fill=c(&qu
 </ul>
 <pre class="r"><code>media_de_passadas &lt;- data %&gt;%
         group_by(interval) %&gt;%
-                summarise(steps = mean(steps))</code></pre>
+                summarise(steps = mean(steps))
+head(media_de_passadas)</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   interval  steps
+##      &lt;int&gt;  &lt;dbl&gt;
+## 1        0 1.72  
+## 2        5 0.340 
+## 3       10 0.132 
+## 4       15 0.151 
+## 5       20 0.0755
+## 6       25 2.09</code></pre>
 <ul>
 <li>Plot the data</li>
 <li>Monto a plotagem dos dados</li>
@@ -262,7 +282,10 @@ paste(&quot;Numero de NAs: &quot;, size, sep = &quot; &quot; )</code></pre>
 <li>Utilizo a funcao tapply para obtera soma de passos por data</li>
 <li>Use tapply function to obtain the sum of steps by day</li>
 </ul>
-<pre class="r"><code>filtro &lt;- tapply(data_na$steps, data_na$date, sum)</code></pre>
+<pre class="r"><code>filtro &lt;- tapply(data_na$steps, data_na$date, sum)
+head(filtro)</code></pre>
+<pre><code>## 2012-10-01 2012-10-02 2012-10-03 2012-10-04 2012-10-05 2012-10-06 
+##   10766.19     126.00   11352.00   12116.00   13294.00   15420.00</code></pre>
 <ul>
 <li>Converto as datas para milesegundos</li>
 <li>Convert dates to mileseconds format</li>
@@ -337,22 +360,17 @@ summary(data_na$tipo_dia)</code></pre>
 <pre class="r"><code>medias_dias &lt;- data_na %&gt;%
                       group_by(tipo_dia,interval) %&gt;%
                       summarise(steps = mean(steps))
-medias_dias</code></pre>
-<pre><code>## # A tibble: 576 x 3
-## # Groups:   tipo_dia [?]
-##    tipo_dia interval steps
-##    &lt;fct&gt;       &lt;int&gt; &lt;dbl&gt;
-##  1 Weekday         0  7.01
-##  2 Weekday         5  5.38
-##  3 Weekday        10  5.14
-##  4 Weekday        15  5.16
-##  5 Weekday        20  5.07
-##  6 Weekday        25  6.30
-##  7 Weekday        30  5.61
-##  8 Weekday        35  6.01
-##  9 Weekday        40  4.98
-## 10 Weekday        45  6.58
-## # ... with 566 more rows</code></pre>
+head(medias_dias)</code></pre>
+<pre><code>## # A tibble: 6 x 3
+## # Groups:   tipo_dia [1]
+##   tipo_dia interval steps
+##   &lt;fct&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1 Weekday         0  7.01
+## 2 Weekday         5  5.38
+## 3 Weekday        10  5.14
+## 4 Weekday        15  5.16
+## 5 Weekday        20  5.07
+## 6 Weekday        25  6.30</code></pre>
 <ul>
 <li>Plotagem dos dados medios para dias uteis e fins de semana</li>
 <li>Plot data average of weekdays and weekend</li>

@@ -46,6 +46,7 @@ head(data)
 passos <- data %>%
         group_by(date) %>%
                 summarise(steps = sum(steps))
+head(passos)
 ```
 
 
@@ -90,6 +91,7 @@ legend("topright", c("Mean", "Median"), fill=c("Green", "red"))
 media_de_passadas <- data %>%
         group_by(interval) %>%
                 summarise(steps = mean(steps))
+head(media_de_passadas)
 ```
 
 * Plot the data
@@ -145,6 +147,7 @@ paste("Number of NAs: ", size, sep = " " )
 
 ```{r}
 filtro <- tapply(data_na$steps, data_na$date, sum)
+head(filtro)
 ```
 
 * Converto as datas para milesegundos
@@ -217,8 +220,7 @@ summary(data_na$tipo_dia)
 medias_dias <- data_na %>%
                       group_by(tipo_dia,interval) %>%
                       summarise(steps = mean(steps))
-medias_dias
-
+head(medias_dias)
 ```
 
 * Plotagem dos dados medios para dias uteis e fins de semana
