@@ -1,0 +1,182 @@
+---
+title: "Reproducible Research: Peer Assessment 1"
+output: 
+  html_document:
+    keep_md: true
+---
+
+
+## Loading and preprocessing the data
+
+Carrego as bibliotecas  
+
+```{r, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
+library(ggplot2)
+library(dplyr)
+library(data.table)
+```
+
+Inicialmente farei a carga dos dados e os verifico  
+
+```{r, echo=TRUE, warning=FALSE, message=FALSE}
+data_na <- read.csv("activity.csv")
+head(data_na)
+```
+
+
+Agora elimino os valores nulos e verifico 
+
+
+```{r, echo=TRUE, warning=FALSE, message=FALSE}
+data <- na.omit(data_na)
+head(data)
+```
+
+## What is mean total number of steps taken per day?
+Filtro os dados para passos diarios
+
+```{r}
+passos <- data %>%
+  group_by(date) %>%
+  summarise(steps = sum(steps))
+```
+
+
+Obtemos a media de passos por dia
+
+```{r}
+media <- mean(passos$steps)
+paste("A media foi de: ", media, sep = " " )
+```
+
+Obtemos a mediana de passos por dia
+
+```{r}
+mediana <- median(passos$steps)
+paste("A mediana foi de: ", mediana, sep = " " )
+```
+
+
+Monto a plotagem dos dados  
+
+```{r}
+hist(passos$steps, xlab = "Passos", ylab = "teste", main = "Titulo", col = "pink")
+```
+
+
+```{r passadas, echo=FALSE}
+ggplot(passos, aes(x = steps)) +
+    geom_histogram(fill = "blue", binwidth = 1000) +
+    labs(title = "Passadas diarias", x = "Passadas", y = "Frequencia")
+```
+
+
+
+## What is the average daily activity pattern?
+
+
+```{r}
+media_de_passadas <- data %>%
+  group_by(interval) %>%
+  summarise(steps = mean(steps))
+
+
+plot(media_de_passadas$interval, media_de_passadas$steps, type="l", xlab="Intervalo", ylab="Passadas",main="Media Diaria de Passadas por Intervalo")
+```
+
+
+```{r}
+maior_intervalo <- media_de_passadas[which.max(media_de_passadas$steps),1]
+paste("O Maior numero de passadas ao longo do dia foi: ", maior_intervalo, sep = " ")
+```
+
+
+
+## Imputing missing values
+
+```{r}
+size <- length(which(is.na(data_na$steps)))
+paste("Numero de NAs: ", size, sep = " " )
+```
+
+
+
+```{r}
+data_na$steps = ifelse(is.na(data_na$steps), mean(data_na$steps, na.rm = T), data_na$steps)
+head(data_na)
+```
+
+```{r}
+size <- length(which(is.na(data_na$steps)))
+paste("Numero de NAs: ", size, sep = " " )
+```
+
+```{r}
+atividades <- data_na %>%
+                group_by(interval) %>%
+                  mutate(steps = replace(steps, is.na(steps), mean(steps, na.rm = TRUE))) %>%
+                      group_by(date) %>%
+                      summarise(steps = sum(steps))
+head(atividades)
+```
+
+```{r}
+filtro <- tapply(data_na$steps, data_na$date, sum)
+qplot(filtro, xlab='Total steps per day (Imputed)', ylab='Frequency using binwith 500', binwidth=500)
+```
+
+```{r}
+data_na$date <- as.POSIXct(data_na$date)
+data_na$mes <- as.numeric(format(data_na$date, "%m"))
+ggplot(data_na, aes(date, steps)) + 
+  facet_grid(. ~ mes, scales = "free") + 
+  geom_bar(stat = "identity", position = "stack", colour = "blue", fill = "red", width = 0.5) + 
+  labs(title = "Numero Total de passos dados a cada dia - Considerando NAs com a m??dia", x = "Data", y = "Numero de Passos")
+
+hist(filtro, xlab = "Frequencia", ylab = "numero de passos", main = "Titulo", col = "chocolate3")
+abline(v = mean(filtro),  col="red", lwd=3, lty=2)
+```
+
+```{r}
+mean(filtro)
+```
+
+
+Monto a plotagem dos dados  
+
+```{r}
+hist(data_na$steps, xlab = "Passos", ylab = "teste", main = "Titulo", col = "pink")
+```
+
+
+
+## Are there differences in activity patterns between weekdays and weekends?
+Um dos meus PCs est?? em Porgugues por isso utilizo domingo e sunday e saturday e sabado para que em um e outro ele possa realizar o mesmo, pois no pc em PT_BR ele gera os weekdays em formato em portugues
+
+
+```{r}
+data_na <- as.data.table(data_na)
+data_na$dia <- weekdays(data_na$date)
+#head(data_na)
+data_na$modo <- ifelse(data_na$dia == "sabado" | data_na$dia == "domingo" | data_na$dia == "Saturday" | data_na$dia == "Sunday", "Weekend", "Weekday")
+head(data_na)
+data_na$modo <- as.factor(data_na$modo)
+summary(data_na$modo)
+```
+
+```{r}
+medias_dias <- data_na %>%
+                      group_by(modo,interval) %>%
+                      summarise(steps = mean(steps))
+medias_dias
+
+```
+
+```{r}
+ggplot(data = medias_dias, aes(x = interval, y = steps))+
+  facet_grid(modo ~ .)+
+  geom_line()+
+  ggtitle("Weekday vs. Weekend (Avg. Steps)")
+```
+
+

@@ -1,5 +1,7 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
+author: "Fagner Sutel de Moura"
+date: "2/11/2018"
 output: 
   html_document:
     keep_md: true
@@ -8,14 +10,17 @@ output:
 
 ## Loading and preprocessing the data
 
-Carrego as bibliotecas  
+* Load the libraries  
+* Carregamento das bibliotecas  
 
 ```{r, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
 library(ggplot2)
 library(dplyr)
+library(data.table)
 ```
 
-Inicialmente farei a carga dos dados e os verifico  
+* Code for reading in the dataset and/or processing the data  
+* Codigo para ler os dados e/ou processar as dados  
 
 ```{r, echo=TRUE, warning=FALSE, message=FALSE}
 data_na <- read.csv("activity.csv")
@@ -23,7 +28,8 @@ head(data_na)
 ```
 
 
-Agora elimino os valores nulos e verifico 
+* Remocao dos valores nulos
+* Remove NA values
 
 
 ```{r, echo=TRUE, warning=FALSE, message=FALSE}
@@ -32,132 +38,236 @@ head(data)
 ```
 
 ## What is mean total number of steps taken per day?
-Filtro os dados para passosik diarios
+
+* Filtro os dados para passos diarios
+* Apply the filter of steps taken by day
 
 ```{r}
 passos <- data %>%
-  group_by(date) %>%
-  summarise(steps = sum(steps))
+        group_by(date) %>%
+                summarise(steps = sum(steps))
 ```
 
-Monto a plotagem dos dados  
 
-
-```{r passadas, echo=FALSE}
-ggplot(passos, aes(x = steps)) +
-    geom_histogram(fill = "blue", binwidth = 1000) +
-    labs(title = "Passadas diarias", x = "Passadas", y = "Frequencia")
-```
-
-Obtemos a media
+* Obtemos a media de passos por dia
+* obtain the mean of steps by day
 
 ```{r}
 media <- mean(passos$steps)
 paste("A media foi de: ", media, sep = " " )
+paste("The mean is: ", media, sep = " " )
 ```
 
-Obtemos a mediana
+* Obtemos a mediana de passos por dia
+* obtain the mean of steps by day
 
 ```{r}
 mediana <- median(passos$steps)
 paste("A mediana foi de: ", mediana, sep = " " )
+paste("The median is: ", mediana, sep = " " )
 ```
+
+
+* Monto a plotagem dos dados
+* Plot the data
+
+```{r}
+hist(passos$steps, xlab = "Passos", ylab = "Frequencia", main = "Number of steps taken each day (with mean - green line)", col = "pink")
+#abline(v = media,  col="green", lwd=3, lty=3)
+abline(v=c(media,mediana), col=c("green", "red"), lty=c(3,2), lwd=c(3, 3))
+legend("topright", c("Mean", "Median"), fill=c("Green", "red"))
+```
+
 
 
 
 ## What is the average daily activity pattern?
 
+* Fazemos um pipeline para obter a media de passadas por intervalos de data
+* Make a pu=ipeline to obtain the average deily activity
 
 ```{r}
 media_de_passadas <- data %>%
-  group_by(interval) %>%
-  summarise(steps = mean(steps))
+        group_by(interval) %>%
+                summarise(steps = mean(steps))
+```
 
+* Plot the data
+* Monto a plotagem dos dados
 
+```{r}
 plot(media_de_passadas$interval, media_de_passadas$steps, type="l", xlab="Intervalo", ylab="Passadas",main="Media Diaria de Passadas por Intervalo")
 ```
 
+* The maximum number of steps by interval
+* O maior numero de passadas por intervalo
 
 ```{r}
 maior_intervalo <- media_de_passadas[which.max(media_de_passadas$steps),1]
 paste("O Maior numero de passadas ao longo do dia foi: ", maior_intervalo, sep = " ")
+paste("The maximum number of steps by interval was: ", maior_intervalo, sep = " ")
 ```
 
 
 
 ## Imputing missing values
 
+* Obtain the number of NAs
+* Obtemos o numero de valores nulos
 ```{r}
 size <- length(which(is.na(data_na$steps)))
 paste("Numero de NAs: ", size, sep = " " )
+paste("Number of NAs: ", size, sep = " " )
 ```
 
-
+* Sunstitui-se os NAs pelo numero medio de passadas no dataset
+* Replace NAS with the mean of steps without NAs in this dataset
 
 ```{r}
 data_na$steps = ifelse(is.na(data_na$steps), mean(data_na$steps, na.rm = T), data_na$steps)
 head(data_na)
 ```
 
+* Obtain the number of NAs
+* Obtemos o numero de valores nulos
 ```{r}
 size <- length(which(is.na(data_na$steps)))
 paste("Numero de NAs: ", size, sep = " " )
+paste("Number of NAs: ", size, sep = " " )
 ```
 
 ```{r}
-atividades <- data_na %>%
-                group_by(interval) %>%
-                  mutate(steps = replace(steps, is.na(steps), mean(steps, na.rm = TRUE))) %>%
-                      group_by(date) %>%
-                      summarise(steps = sum(steps))
-head(atividades)
+
 ```
+
+* Utilizo a funcao tapply para obtera soma de passos por data
+* Use tapply function to obtain the sum of steps by day
 
 ```{r}
 filtro <- tapply(data_na$steps, data_na$date, sum)
-qplot(filtro, xlab='Total steps per day (Imputed)', ylab='Frequency using binwith 500', binwidth=500)
 ```
+
+* Converto as datas para milesegundos
+* Convert dates to mileseconds format
 
 ```{r}
 data_na$date <- as.POSIXct(data_na$date)
-data_na$mes <- as.numeric(format(data_na$date, "%m"))
-ggplot(data_na, aes(date, steps)) + 
-  facet_grid(. ~ mes, scales = "free") + 
-  geom_bar(stat = "identity", position = "stack", colour = "blue", fill = "red", width = 0.5) + 
-  labs(title = "Numero Total de passos dados a cada dia - Considerando NAs com a m??dia", x = "Data", y = "Numero de Passos")
 ```
+
+* Crio a variavel mes e extrai seu valor do atributo date 
+* Create the mes variable and obtain your value of date atribute
 
 ```{r}
-mean(data_na$steps)
+data_na$mes <- as.numeric(format(data_na$date, "%m"))
 ```
 
+* Media de passos por dia
+* Avera of steps taken each day
+
+```{r}
+media_dia <- mean(filtro)
+```
+
+* Mediana de passos por dia
+* Median of steps taken each day
+
+```{r}
+mediana_dia <- median(filtro)
+```
+
+* Crio o histrograma com o numero de passos por dia apos inserir os valores nulos tratados
+* Create the histogram of number steps taken each day after treat de minning values
+
+```{r}
+hist(filtro, xlab = "Numero de Passos", ylab = "Frequencia", main = "Histograma com o numero total de passos por dia com NAs tratados", col = "#2073d4")
+abline(v=c(media_dia,mediana_dia), col=c("green", "red"), lty=c(3,2), lwd=c(3, 3))
+legend("topright", c("Mean", "Median"), fill=c("Green", "red"))
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
+
+* Criamos a coluna dia com o dia da semama obtido do atributo date
+* Create the dia column with the weekday obtained from de date attibute
 ```{r}
-library(data.table)
-data_na <- as.data.table(data_na)
 data_na$dia <- weekdays(data_na$date)
-#head(data_na)
-data_na$modo <- ifelse(data_na$dia == "sabado" | data_na$dia == "domingo" | data_na$dia == "Saturday" | data_na$dia == "Sunday", "Weekend", "Weekday")
 head(data_na)
-data_na$modo <- as.factor(data_na$modo)
-summary(data_na$modo)
 ```
+
+* Aplicamos o filtro para criar as categorias 'weekend' e 'weekday'
+* Apply filter to create the categories  'weekend' and 'weekday'
+ *My computer is in portuguese PT_BR and the function weekdays can convert the weekdays to [segunda, terca, quarta, quinta...] instead [monday, tuesday, ....]. My option to solve this is include two modes of days to execurrute correct a function to obtain the classes weekend ou weekday
+```{r}
+data_na$tipo_dia <- ifelse(data_na$dia == "sabado" | data_na$dia == "domingo" | data_na$dia == "Saturday" | data_na$dia == "Sunday", "Weekend", "Weekday")
+head(data_na)
+```
+
+* Converter a variavel tipo_dia para um tipo categorico
+* Convert tipo_dia to factor variable
+```{r}
+data_na$tipo_dia <- as.factor(data_na$tipo_dia)
+summary(data_na$tipo_dia)
+```
+
+
+* Crio o dataframe medias_dias com as medias de passadas aos dias uteis e fins de semana
+* Create a dataframe medias_dias with the average of the weekdays and weekend
 
 ```{r}
 medias_dias <- data_na %>%
-                      group_by(modo,interval) %>%
+                      group_by(tipo_dia,interval) %>%
                       summarise(steps = mean(steps))
 medias_dias
 
 ```
 
+* Plotagem dos dados medios para dias uteis e fins de semana
+* Plot data average of weekdays and weekend
+
 ```{r}
-ggplot(data = medias_dias, aes(x = interval, y = steps))+
-  facet_grid(modo ~ .)+
-  geom_line()+
-  ggtitle("Weekday vs. Weekend (Avg. Steps)")
+ggplot(data = medias_dias, aes(x = interval, y = steps)) +
+  facet_grid(tipo_dia ~ .) +
+  geom_line(stat = "identity", aes(colour = tipo_dia)) +
+  ggtitle("Dias Uteis x Fim de Semana (Media de Passadas)") +
+  labs(x="Intervalo", y=expression("Numero de passos"))
+```
+
+## Alternative Mode
+* Primeiro criamos dataFrames para dias uteis e fins de semana
+* First create a weekdays and weekend dataFrames
+
+```{r}
+weekday_db <- medias_dias[medias_dias$tipo_dia == "Weekday", ]
+weekday_db
+weekend_db <- medias_dias[medias_dias$tipo_dia == "Weekend", ]
+weekend_db
+```
+* Criamos as plotagens dos dois dataFrames
+* Create the plots of dataFrames
+```{r}
+data_weekdays<- ggplot(weekday_db) +
+        geom_line(aes(x = interval, y = steps), colour = "red", linetype = "dashed") +
+    xlab("Intervalos de Dias Uteis") +
+    ylab("Passsos")
+
+data_weekends <- ggplot(weekend_db) +
+        geom_line(aes(x = interval, y = steps), colour = "blue", linetype = "dotted") +
+  xlab("Intervalos de Fins de Semana") +
+  ylab("Passsos")
+```
+
+* Instalamos e Carregamos a biblioteca para criar grid de plotagens
+* Install and load the library to create a plot grid
+
+```{r}
+#install.packages('gridExtra')
+library(gridExtra)
+```
+* Exibimos o grid criado
+* Displays a created grid
+
+```{r}
+grid.arrange(data_weekdays,data_weekends,  ncol=1, top = "Dias Uteis x Fim de Semana (Media de Passadas)", left = "Y", bottom = "X")
 ```
 
 
